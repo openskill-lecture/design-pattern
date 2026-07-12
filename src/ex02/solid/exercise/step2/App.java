@@ -1,16 +1,6 @@
 package ex02.solid.exercise.step2;
 
-/*
- * [연습문제 정답] 주문 접수 채널 - 추상화로 해결
- *
- * OrderChannel 인터페이스를 새로 만들었다. (추상화)
- *   - 각 채널은 이 인터페이스를 구현한다.        → 새 채널 = 클래스 추가만 (OCP)
- *   - OrderTaker는 OrderChannel을 주입받는다.     → 구체 클래스를 모른다 (DIP)
- *
- * 키오스크가 필요하면 KioskOrder 하나만 추가하면 끝. OrderTaker는 손도 안 댄다.
- */
-
-// 새로 만든 추상 (모든 주문 채널의 약속)
+// 제공: 모든 주문 채널이 따라야 하는 약속
 interface OrderChannel {
     void 접수한다(String menu);
 }
@@ -33,32 +23,42 @@ class DeliveryAppOrder implements OrderChannel {
     }
 }
 
-// 새 채널 = 클래스 추가만. 아래 OrderTaker는 한 줄도 안 고친다.
-class KioskOrder implements OrderChannel {
-    public void 접수한다(String menu) {
-        System.out.println("[키오스크] " + menu + " 주문 접수");
+class OrderTaker {
+    // TODO 1. String이 아니라 OrderChannel을 보관하세요.
+    // private ??? channel;
+
+    // TODO 2. 생성자로 OrderChannel을 주입받으세요.
+    // OrderTaker(??? channel) {
+    //     this.channel = channel;
+    // }
+
+    void 주문한다(String menu) {
+        // TODO 4. channel에게 접수하라고 시키세요.
+        // channel.???(menu);
     }
 }
 
-class OrderTaker {
-    // 어떤 채널인지 모른다. OrderChannel(추상)만 알고, 밖에서 받아 시킨다.
-    void 주문한다(OrderChannel channel, String menu) {
-        channel.접수한다(menu);
-    }
-}
+
+// TODO 5. 키오스크 주문 클래스를 추가하세요.
+// class KioskOrder ...
+
 
 public class App {
     public static void main(String[] args) {
-        OrderTaker taker = new OrderTaker();
+        // TODO 4. TODO3까지 완료되면 아래 주문한다 주석을 풀고 실행해보세요.
+        //OrderTaker storeTaker = new OrderTaker(new StoreOrder());
+        //storeTaker.주문한다("아메리카노");
 
-        // 채널을 밖에서 골라 주입한다. if-else가 사라졌다.
-        taker.주문한다(new StoreOrder(), "아메리카노");
-        taker.주문한다(new PhoneOrder(), "라떼");
-        taker.주문한다(new DeliveryAppOrder(), "바닐라라떼");
+        //OrderTaker phoneTaker = new OrderTaker(new PhoneOrder());
+        //phoneTaker.주문한다("라떼");
+
+        //OrderTaker deliveryTaker = new OrderTaker(new DeliveryAppOrder());
+        //deliveryTaker.주문한다("바닐라라떼");
 
         System.out.println("----------------------------");
 
-        // 키오스크 추가 = 클래스 하나. OrderTaker는 수정 0줄. ← OCP + DIP
-        taker.주문한다(new KioskOrder(), "콜드브루");
+        // TODO 6. 키오스크 주문을 추가해보세요.
+        // OrderTaker kioskTaker = new OrderTaker(new KioskOrder());
+        // kioskTaker.주문한다("콜드브루");
     }
 }

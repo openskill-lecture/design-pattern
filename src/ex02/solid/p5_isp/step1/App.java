@@ -16,10 +16,10 @@ class Barista implements Employee {
 // 홀알바는 청소만 한다. 그런데 인터페이스가 제조·배달까지 강제한다.
 class HallStaff implements Employee {
     public void 제조한다() {
-        throw new RuntimeException("홀알바는 커피를 못 만듭니다!"); // 억지 구현
+        // 비워야 함
     }
     public void 배달한다() {
-        throw new RuntimeException("홀알바는 배달을 안 합니다!");   // 억지 구현
+        // 비워야 함
     }
     public void 청소한다() { System.out.println("청소"); }
 }

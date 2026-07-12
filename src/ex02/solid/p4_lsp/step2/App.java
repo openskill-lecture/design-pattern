@@ -1,5 +1,6 @@
 package ex02.solid.p4_lsp.step2;
 
+// 실습아님
 // '제조할 수 있는 것'만 Drink다. 만들 수 없는 건 아예 Drink가 아니다.
 abstract class Drink {
     abstract void 제조한다();
