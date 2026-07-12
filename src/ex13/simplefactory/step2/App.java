@@ -1,4 +1,4 @@
-package ex13.db.step2;
+package ex13.simplefactory.step2;
 
 // 생성을 팩토리 한 곳으로 모은다. 클라이언트는 무엇을 만들지만 고르고, 어떻게 만드는지는 모른다.
 

@@ -1,4 +1,4 @@
-package ex13.db.step1;
+package ex13.simplefactory.step1;
 
 // 생성을 누가 하나? 아직은 클라이언트가 직접 new 한다.
 
