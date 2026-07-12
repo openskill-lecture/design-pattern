@@ -1,42 +1,38 @@
 package ex02.solid.p2_ocp.step2;
 
-// 완성코드 : 가격은 각 음료가 스스로 안다. 가격표(Menu)는 묻기만 한다.
-abstract class Drink {
-    abstract String getName();
-    abstract int 가격();
+// 완성코드 : 공격은 각 캐릭터가 스스로 안다. 게임(Game)은 시키기만 한다.
+abstract class Hero {
+    abstract void 공격();
 }
 
-class Americano extends Drink {
-    String getName() { return "아메리카노"; }
-    int 가격() { return 4000; }
+class Warrior extends Hero {
+    void 공격() { System.out.println("전사가 칼을 휘두른다"); }
 }
 
-class Latte extends Drink {
-    String getName() { return "라떼"; }
-    int 가격() { return 4500; }
+class Archer extends Hero {
+    void 공격() { System.out.println("궁수가 활을 쏜다"); }
 }
 
-// 새 음료 = 클래스 추가만. Menu도, 기존 음료도 안 건드린다.
-class VanillaLatte extends Drink {
-    String getName() { return "바닐라라떼"; }
-    int 가격() { return 5000; }
+// 새 캐릭터 = 클래스 추가만. Game도, 기존 캐릭터도 안 건드린다.
+class Mage extends Hero {
+    void 공격() { System.out.println("마법사가 파이어볼을 던진다"); }
 }
 
-class Menu {
-    void 출력(Drink drink) {
-        System.out.println(drink.getName() + " : " + drink.가격());
+class Game {
+    void 전투(Hero hero) {
+        hero.공격();   // 누가 왔는지 안 묻는다. 그냥 공격을 시킨다.
     }
 }
 
 public class App {
     public static void main(String[] args) {
-        Menu menu = new Menu();
-        Drink[] drinks = { new Americano(), new Latte(), new VanillaLatte() };
+        Game game = new Game();
+        Hero[] party = { new Warrior(), new Archer(), new Mage() };
 
-        for (Drink drink : drinks) {
-            menu.출력(drink);   // 각자 자기 가격을 말한다
+        for (Hero hero : party) {
+            game.전투(hero);   // 각자 자기 방식으로 공격한다
         }
 
-        // VanillaLatte를 추가했지만 Menu는 한 줄도 안 고쳤다. ← OCP (확장에 열려있다)
+        // Mage를 추가했지만 Game은 한 줄도 안 고쳤다. ← OCP (확장에 열려있다)
     }
 }
