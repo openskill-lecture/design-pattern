@@ -1,4 +1,4 @@
-package ex05.exercise.start;
+package ex05.exercise.payment.start;
 
 // [연습문제 - 어댑터패턴] 외부 결제 라이브러리를 우리 계산대 규격에 맞춰 끼워라.
 //

@@ -1,4 +1,4 @@
-package ex05.exercise.answer;
+package ex05.exercise.payment.answer;
 
 // [연습문제 정답 - 어댑터패턴] 외부 결제 라이브러리를 우리 계산대 규격(Payment)에 맞춘다.
 
