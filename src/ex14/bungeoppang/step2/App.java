@@ -7,17 +7,24 @@ package ex14.bungeoppang.step2;
 
 interface Bungeoppang {
     void 먹는다();
+    int 가격();
 }
 
 class PatBung implements Bungeoppang {
     public void 먹는다() {
-        System.out.println("팥붕어빵: 팥이 가득!");
+        System.out.println("팥붕어빵: 팥이 가득! (" + 가격() + "원)");
+    }
+    public int 가격() {
+        return 1500;
     }
 }
 
 class CreamBung implements Bungeoppang {
     public void 먹는다() {
-        System.out.println("슈크림붕어빵: 슈크림이 가득!");
+        System.out.println("슈크림붕어빵: 슈크림이 가득! (" + 가격() + "원)");
+    }
+    public int 가격() {
+        return 2000;
     }
 }
 
@@ -25,7 +32,7 @@ class CreamBung implements Bungeoppang {
 class BungeoppangShop {
     public Bungeoppang 굽기() {
         System.out.println("가게 문을 연다.");
-        Bungeoppang bungeoppang = new PatBung();   // ← 부모가 팥으로 못박았다. 자식이 못 바꾼다!
+        Bungeoppang bungeoppang = new PatBung();   // ← 부모가 팥으로 못박았다. 자식이 못 바꾼다! (가격도 팥 값 1500원으로 고정된다)
         System.out.println("붕어빵을 건넨다.");
         return bungeoppang;
     }
@@ -47,6 +54,6 @@ public class App {
         System.out.println("----------------------------");
 
         BungeoppangShop creamShop = new CreamShop();
-        creamShop.굽기().먹는다();   // 슈크림 가게인데... 팥붕어빵이 나온다!
+        creamShop.굽기().먹는다();   // 슈크림 가게인데... 팥붕어빵이, 그것도 1500원에 나온다! (2000원이어야 정상)
     }
 }
