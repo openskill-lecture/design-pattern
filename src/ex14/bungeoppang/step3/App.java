@@ -24,11 +24,11 @@ abstract class BungeoppangShop {
     protected abstract Bungeoppang 반죽만들기();
 
     // 굽는 공통 흐름은 부모가 고정한다. 부모는 "무엇이" 만들어지는지 모른다.
-    public void 굽기() {
+    public Bungeoppang 굽기() {
         System.out.println("가게 문을 연다.");
         Bungeoppang bungeoppang = 반죽만들기();   // ← 자식이 채운 반죽만들기()가 여기서 불린다 (동적바인딩)
         System.out.println("붕어빵을 건넨다.");
-        bungeoppang.먹는다();
+        return bungeoppang;
     }
 }
 
@@ -50,11 +50,11 @@ class CreamShop extends BungeoppangShop {
 public class App {
     public static void main(String[] args) {
         BungeoppangShop patShop = new PatShop();
-        patShop.굽기();
+        patShop.굽기().먹는다();
 
         System.out.println("----------------------------");
 
         BungeoppangShop creamShop = new CreamShop();
-        creamShop.굽기();   // step2와 달리, 이제 진짜 슈크림붕어빵이 나온다
+        creamShop.굽기().먹는다();   // step2와 달리, 이제 진짜 슈크림붕어빵이 나온다
     }
 }
