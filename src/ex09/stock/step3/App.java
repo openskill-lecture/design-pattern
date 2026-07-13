@@ -7,7 +7,7 @@ import java.util.List;
 // 투자자를 추가하든 빼든 증권사 코드는 그대로. → 옵저버 패턴.
 
 interface Investor {                    // 통로(약속) : "알림 오면 받는다"
-    void 알림받기(String msg);
+    void 알림받기(int price);
 }
 
 class Trader implements Investor {
@@ -15,25 +15,27 @@ class Trader implements Investor {
     Trader(String name) { this.name = name; }
 
     @Override
-    public void 알림받기(String msg) {
-        System.out.println(name + " : " + msg);
+    public void 알림받기(int price) {
+        System.out.println(name + " : " + price + "원으로 변동됐어요");
     }
 }
 
 class StockCenter {
     private List<Investor> investorList = new ArrayList<>();   // 구독 명단
+    private int price;
 
     void 구독(Investor i)     { investorList.add(i); }
     void 구독취소(Investor i) { investorList.remove(i); }
 
-    private void 알림(String msg) {                            // 명단 전체에게 push
-        investorList.forEach(i -> i.알림받기(msg));
+    private void 알림(int price) {                             // 명단 전체에게 push
+        investorList.forEach(i -> i.알림받기(price));
     }
 
     void 시세변동() {
         try { Thread.sleep(3000); } catch (InterruptedException e) { throw new RuntimeException(e); }
-        System.out.println("[증권사] 54000원으로 시세 변동 완료!");
-        알림("54000원으로 변동됐어요");
+        price = 54000;
+        System.out.println("[증권사] " + price + "원으로 시세 변동 완료!");
+        알림(price);
     }
 }
 

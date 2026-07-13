@@ -20,8 +20,8 @@ class Investor {
     private String name;
     Investor(String name) { this.name = name; }
 
-    void 알림받기(String msg) {
-        System.out.println(name + " : " + msg + " 확인!");
+    void 알림받기(int price) {
+        System.out.println(name + " : " + price + "원으로 변동됐어요 확인!");
     }
 }
 
@@ -38,7 +38,7 @@ public class App {
             try { Thread.sleep(1000); } catch (InterruptedException e) { throw new RuntimeException(e); }
 
             if (center.getPrice() != null) {                  // 드디어 바뀌었다!
-                inv1.알림받기(center.getPrice() + "원으로 변동됐어요");
+                inv1.알림받기(center.getPrice());
                 break;
             }
             System.out.println("투자자1 : 아직 그대로네요? (또 물어봄)");   // 헛물음 = 낭비!

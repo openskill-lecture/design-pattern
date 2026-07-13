@@ -7,14 +7,15 @@ class Investor {
     private String name;
     Investor(String name) { this.name = name; }
 
-    void 알림받기(String msg) {
-        System.out.println(name + " : " + msg);
+    void 알림받기(int price) {
+        System.out.println(name + " : " + price + "원으로 변동됐어요");
     }
 }
 
 class StockCenter {
     private Investor investor1;   // 투자자를 직접 박아둔다.
     private Investor investor2;   // 투자자가 늘면? 필드를 또 늘려야 한다.
+    private int price;
 
     void 구독(Investor a, Investor b) {
         this.investor1 = a;
@@ -23,9 +24,10 @@ class StockCenter {
 
     void 시세변동() {
         try { Thread.sleep(3000); } catch (InterruptedException e) { throw new RuntimeException(e); }
+        price = 53000;
         System.out.println("[증권사] 시세 변동 완료!");
-        investor1.알림받기("53000원으로 변동됐어요");   // 하드코딩
-        investor2.알림받기("53000원으로 변동됐어요");   // 투자자3이 생기면 여기 또 추가… (증권사를 뜯어고쳐야 한다)
+        investor1.알림받기(price);   // int price가 그대로 흐른다
+        investor2.알림받기(price);   // 투자자3이 생기면 여기 또 추가… (증권사를 뜯어고쳐야 한다)
     }
 }
 
