@@ -1,4 +1,4 @@
-package ex06.grid.step3;
+package ex06.builder.step3;
 
 // 빌더 패턴 — 생성을 Builder에게 위임한다.
 // 체이닝이 하나의 '식'으로 읽히고, build()에서 한 번에 완성·검증한다. 완성된 Grid는 불변.

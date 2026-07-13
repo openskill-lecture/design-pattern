@@ -1,4 +1,4 @@
-package ex06.grid.step2;
+package ex06.builder.step2;
 
 // setter로 하나씩 조립한다. 이름이 보여 읽기는 쉬워졌지만 —
 // (1) 필수값을 빼먹어도 안 잡아주고, (2) 다 만든 뒤에도 열려 있어 값이 또 바뀐다.

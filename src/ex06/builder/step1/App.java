@@ -1,4 +1,4 @@
-package ex06.grid.step1;
+package ex06.builder.step1;
 
 // Grid를 만들려면 생성자에 값을 몰아넣는다. 인자가 뭐가 뭔지, 순서가 헷갈린다.
 
