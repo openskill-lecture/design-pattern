@@ -4,21 +4,30 @@ package ex13.shape.step2;
 
 interface Shape {
     void 그린다();
+    int 넓이();
 }
 
 class Circle implements Shape {
-    private String name;
-    public void setName(String name) { this.name = name; }
+    private int radius;
+    public void setRadius(int radius) { this.radius = radius; }
+    public int 넓이() {
+        return radius * radius * 3;   // 원주율은 3으로 단순화
+    }
     public void 그린다() {
-        System.out.println(name + " 원을 그린다");
+        System.out.println("반지름 " + radius + " 원 (넓이 " + 넓이() + ")");
     }
 }
 
 class Rectangle implements Shape {
-    private String name;
-    public void setName(String name) { this.name = name; }
+    private int width;
+    private int height;
+    public void setWidth(int width) { this.width = width; }
+    public void setHeight(int height) { this.height = height; }
+    public int 넓이() {
+        return width * height;
+    }
     public void 그린다() {
-        System.out.println(name + " 사각형을 그린다");
+        System.out.println("가로 " + width + " 세로 " + height + " 사각형 (넓이 " + 넓이() + ")");
     }
 }
 
@@ -31,11 +40,12 @@ class ShapeFactory {
     public Shape create(ShapeType type) {
         if (type == ShapeType.CIRCLE) {
             Circle shape = new Circle();
-            shape.setName("빨간색");    // 생성 절차도 팩토리가 안다
+            shape.setRadius(5);    // 생성 절차(치수 세팅)도 팩토리가 안다
             return shape;
         } else if (type == ShapeType.RECTANGLE) {
             Rectangle shape = new Rectangle();
-            shape.setName("파란색");
+            shape.setWidth(4);
+            shape.setHeight(6);
             return shape;
         }
         throw new IllegalArgumentException("지원하지 않는 type : " + type);
@@ -52,7 +62,7 @@ public class App {
 
         System.out.println("----------------------------");
 
-        // 도형을 바꿔도 클라이언트는 인자 하나만 바꾼다. new도 세팅도 팩토리 안에 있다.
+        // 도형을 바꿔도 클라이언트는 인자 하나만 바꾼다. new도 치수 세팅도 팩토리 안에 있다.
         Shape shape2 = factory.create(ShapeType.RECTANGLE);
         shape2.그린다();
     }
