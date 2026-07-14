@@ -1,40 +1,50 @@
 package ex13.staticfactory.step2;
 
-// 생성자를 감추고, 이름 붙인 정적 팩토리로만 만든다. 메서드 이름이 곧 무엇을 만드는지다.
+// 생성자를 감추고, 이름 붙인 정적 팩토리가 각 역할의 칸만 채운다. 어느 칸을 null로 둘지는 팩토리가 안다.
 class User {
-    private String role;
+    private int id;
+    private String username;
+    private String subject;   // 담당과목 : 강사만
+    private Integer grade;     // 담당학년 : 강사만
+    private String course;    // 듣는수업 : 학생만
 
-    // 생성자를 private으로 감춘다 → 밖에서 new User("아무거나") 못 한다.
-    private User(String role) {
-        this.role = role;
+    // 생성자를 private으로 감춘다 → 밖에서 아무 칸이나 채운 User를 못 만든다.
+    private User(int id, String username, String subject, Integer grade, String course) {
+        this.id = id;
+        this.username = username;
+        this.subject = subject;
+        this.grade = grade;
+        this.course = course;
     }
 
-    // 이름이 의도를 말한다. 매직 스트링도, if 분기도 부르는 쪽에서 사라진다.
-    static User student() {
-        return new User("STUDENT");
+    // 강사 : 과목/학년만 받는다. 수업 칸은 팩토리가 null로 채운다.
+    static User 강사(int id, String username, String subject, int grade) {
+        return new User(id, username, subject, grade, null);
     }
 
-    static User staff() {
-        return new User("STAFF");
+    // 학생 : 수업만 받는다. 과목/학년 칸은 팩토리가 null로 채운다.
+    static User 학생(int id, String username, String course) {
+        return new User(id, username, null, null, course);
     }
 
-    public String getRole() {
-        return role;
+    public String info() {
+        return "#" + id + " " + username +
+               " | 과목=" + subject + " 학년=" + grade + " 수업=" + course;
     }
 }
 
 public class App {
     public static void main(String[] args) {
-        // 학생과 직원을 동시에, 이름만 보고 만든다. 문자열을 외울 필요가 없다.
-        User student = User.student();
-        User staff = User.staff();
-        System.out.println("student : " + student.getRole());
-        System.out.println("staff   : " + staff.getRole());
+        // 이름이 곧 역할이다. 어느 칸을 채우고 어느 칸을 null로 둘지 외울 필요가 없다.
+        User teacher = User.강사(1, "김강사", "자바", 2);
+        User student = User.학생(2, "이학생", "자바");
+        System.out.println(teacher.info());   // 수업=null 은 팩토리가 채웠다
+        System.out.println(student.info());   // 과목=null 학년=null 은 팩토리가 채웠다
 
         System.out.println("----------------------------");
 
-        // 오타는 아예 컴파일이 안 된다. step1의 new User("STUFF") 같은 버그가 원천 차단.
-        // User.stuff();   // compile error : cannot find symbol
-        System.out.println("잘못된 유저는 만들 방법이 없다");
+        // 강사인데 수업까지 넣는 짓이 불가능하다. 강사 팩토리엔 수업 칸 자체가 없다.
+        // User.강사(3, "김섞임", "파이썬", 1, "자바");  // compile error : 인자 개수가 안 맞는다
+        System.out.println("섞인 유저는 만들 방법이 없다");
     }
 }
