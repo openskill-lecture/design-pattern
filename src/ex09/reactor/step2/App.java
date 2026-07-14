@@ -28,15 +28,15 @@ interface Publisher<T> {
 }
 
 interface Subscriber<T> {
-    void onSubscribe(Subscription subscription);
-    void onNext(T item);
-    void onError(Throwable error);
-    void onComplete();
+    void onSubscribe(Subscription subscription); // 구독 제어권을 넘겨받는다
+    void onNext(T item);                          // 값이 흐른다 — 여러 번
+    void onError(Throwable error);                // 흐름이 에러로 끝
+    void onComplete();                            // 흐름이 정상 종료
 }
 
 interface Subscription {
     void request(long n);                         // 받을 만큼만 요청 — 이만큼 흘려보내라
-    void cancel();
+    void cancel();                                // 손님이 스스로 구독을 끊는다
 }
 // ──────────────────────────────────────────────────────────
 
@@ -72,6 +72,7 @@ class Mart implements Publisher<Product> {
         subscriber.onSubscribe(seat);             // 손님이 이 좌석으로 request/cancel 한다
     }
 
+    // 상품이 시간차로 여러 번 들어온다 → onNext 를 여러 번, 끝나면 onComplete
     public void 입고(Product... products) {
         for (Product product : products) {
             System.out.println("[마트] " + product + " 입고!");
@@ -88,6 +89,7 @@ class Mart implements Publisher<Product> {
             }
             System.out.println("----------------------------");
         }
+        // 더 들어올 상품이 없다 → 흐름 종료를 알린다 (완료는 흐름의 신호다)
         System.out.println("[마트] 오늘 영업 종료!");
         for (Seat seat : seats) {
             if (!seat.cancelled) {
@@ -112,7 +114,7 @@ class Customer implements Subscriber<Product> {
 
     @Override
     public void onSubscribe(Subscription subscription) {
-        this.subscription = subscription;
+        this.subscription = subscription; // 제어권을 보관해 둔다
         System.out.println(name + " : 구독 시작 → " + initialRequest + "개 요청(request " + initialRequest + ")");
         subscription.request(initialRequest);
     }
