@@ -1,53 +1,59 @@
 package ex12.signup.step3;
 
-// step3 : step2 는 "몇 번 불렀나"(count) 였다. 이번엔 "순서대로 불렀나"를 검증한다.
-// 규칙 : 가입은 반드시 '중복검사 → 저장' 순서. 저장을 먼저 하면 이미 있는 회원을 덮어써버린다.
-// → Mock 이 count 대신 '호출 순서'를 기록한다. (기록 대상은 검증 목적에 따라 달라진다)
+// step3 : step2 에서 저장을 분리해 갈아끼울 '이음새'가 생겼다.
+// 이제 그 자리에 진짜(RealRepository) 대신 '가짜(Mock)'를 끼운다. → 진짜 회원 없이, 게다가 행위까지 검증.
+//   이번 버그 = 중복 저장. 결과값(성공/true)만 보면 통과처럼 보인다 → count 로 잡는다.
+//
+// 왜 AI 프렌들리인가 :
+//   - 계약(UserRepository) = AI 에게 '무엇을 만들지'를 모호함 없이 알려주는 스펙
+//   - 자동 검증(main) = AI 가 짠 코드의 실수를 즉시 잡아낸다  ← 이번엔 '중복 저장'을 잡는다
 
-interface UserStore {
-    void 중복검사();
+interface UserRepository {
     void save(String name);
 }
 
-// 가짜(Mock) : 호출을 '순서대로' 기록한다. (step2 의 count 와는 기록 대상이 다르다)
-class MockStore implements UserStore {
-    String order = "";               // 무엇을, 어떤 순서로 불렀나
-
-    public void 중복검사() {
-        order += "중복검사 ";
-    }
+// 가짜(Mock) : 값은 없지만(void), '몇 번 불렸는지'를 기록한다.
+// ★ 진짜(RealRepository)와 달리 진짜 회원이 안 쌓이고, 나아가 이 count(호출 기록)로 '행위'까지 검증한다.
+class MockRepository implements UserRepository {
+    int count = 0;                   // 호출 기록 (행위 검증용)
 
     public void save(String name) {
-        order += "저장 ";
+        count++;                     // 불릴 때마다 기록
     }
 }
 
-// 버그 : 저장을 먼저 하고 중복검사를 나중에 한다. (순서가 뒤바뀜)
+// 버그 : 가입 한 번에 저장을 '두 번' 호출한다. (저장 코드가 실수로 중복됐다)
 class SignupService {
-    private UserStore store;
+    private UserRepository repository;
 
-    SignupService(UserStore store) {      // 주입
-        this.store = store;
+    SignupService(UserRepository repository) {  // 주입
+        this.repository = repository;
     }
 
-    void 가입(String name) {
-        store.save(name);            // 버그! 저장을 먼저 해버린다
-        store.중복검사();            // 중복검사가 뒤로 밀렸다
+    boolean 가입(String name) {
+        if (name == null || name.isEmpty()) return false;
+        repository.save(name);          // 첫 번째 저장
+        repository.save(name);          // 버그! 두 번째 저장 (중복 저장)
+        return true;
     }
 }
 
 public class App {
     public static void main(String[] args) {
-        MockStore mock = new MockStore();
+        MockRepository mock = new MockRepository();
         SignupService service = new SignupService(mock);
 
-        service.가입("alice");
+        boolean ok = service.가입("alice");
 
-        // 행위 검증 : '호출 순서'를 본다. count(몇 번) 로는 절대 못 잡는 버그다.
-        System.out.println("호출 순서 : " + mock.order.trim());
-        boolean ok = mock.order.trim().equals("중복검사 저장");
-        System.out.println(ok
-                ? "[통과] 중복검사 → 저장 순서 정상"
-                : "[실패] 순서 뒤바뀜 적발! 이미 있는 회원을 덮어쓸 뻔했다. (기대: 중복검사 저장)");
+        // 1) 결과값(상태)만 보면? → 성공(true). 값만 보면 중복 저장을 놓친다.
+        System.out.println("가입 결과 : " + (ok ? "성공" : "실패") + "  ← 값만 보면 통과처럼 보인다");
+
+        System.out.println("----------------------------");
+
+        // 2) '몇 번 불렸나'(행위)를 보면? → 2번. 중복 저장을 잡는다. (이게 Mock)
+        System.out.println("save 호출 횟수 : " + mock.count + " (예상 1)");
+        System.out.println(mock.count == 1
+                ? "[통과]"
+                : "[실패] 중복 저장 적발! save가 " + mock.count + "번 불렸다.");
     }
 }
