@@ -1,83 +1,86 @@
 package ex09.reactor.step1;
 
-// 옵저버 update() 하나가, 흐름의 세 신호로 진화한다 — onNext(여러 번)·onError·onComplete.
-// 구독자는 onSubscribe 로 받은 구독권으로 흐름을 제어한다(cancel).
-
+// ── Reactive Streams 계약 3종 (라이브러리 없이 직접) ──
 interface Publisher<T> {
-    void subscribe(Subscriber<T> subscriber);
+    void subscribe(Subscriber<? super T> s);
 }
 
 interface Subscriber<T> {
-    void onSubscribe(Subscription subscription); // 구독권을 넘겨받는다
-    void onNext(T item);                          // 값이 흐른다 — 여러 번
-    void onError(Throwable error);                // 에러로 끝
-    void onComplete();                            // 정상 종료
+    void onSubscribe(Subscription s); // ① 계약을 받는다
+
+    void onNext(T item); // ② 값이 흐른다 (여러 번)
+
+    void onError(Throwable t); // 에러로 끝
+
+    void onComplete(); // ③ 정상 종료
 }
 
 interface Subscription {
-    void cancel();                                // 구독자가 흐름을 끊는다
+    void request(long n); // 받을 만큼 요청
+
+    void cancel(); // 그만 받기
 }
 
-// 1~5 를 구독하자마자 그냥 밀어붙이는(push) 발행자
-class NumberPublisher implements Publisher<Integer> {
+// 계약(Subscription)을 클래스로 — Publisher와 Subscriber 사이의 약속을 담는다
+class SimpleSubscription implements Subscription {
+    private final Subscriber<? super Integer> sub; // 누구에게 신호를 보낼 계약인지
 
-    @Override
-    public void subscribe(Subscriber<Integer> subscriber) {
-        NumberSubscription subscription = new NumberSubscription(subscriber);
-        subscriber.onSubscribe(subscription);
-        subscription.start();                     // 구독하자마자 다 보낸다
+    SimpleSubscription(Subscriber<? super Integer> sub) {
+        this.sub = sub;
     }
 
-    static class NumberSubscription implements Subscription {
-        private final Subscriber<Integer> subscriber;
-        private boolean cancelled = false;
+    @Override
+    public void request(long n) {
+        // "달라"고 하면 1,2,3 내보내고 완결
+        sub.onNext(1);
+        sub.onNext(2);
+        sub.onNext(3);
+        sub.onComplete();
+    }
 
-        NumberSubscription(Subscriber<Integer> subscriber) {
-            this.subscriber = subscriber;
-        }
+    @Override
+    public void cancel() {
+    } // 이 예제에선 안 씀
+}
 
-        void start() {
-            for (int i = 1; i <= 5; i++) {
-                if (cancelled) return;            // 끊겼으면 멈춘다 (완료도 안 보냄)
-                subscriber.onNext(i);
-            }
-            subscriber.onComplete();              // 다 보냈으면 끝 신호
-        }
-
-        @Override
-        public void cancel() {
-            cancelled = true;
-        }
+// 가장 단순한 Publisher: 계약을 만들어 소비자에게 건넨다
+class SimplePublisher implements Publisher<Integer> {
+    @Override
+    public void subscribe(Subscriber<? super Integer> sub) {
+        sub.onSubscribe(new SimpleSubscription(sub)); // 계약 생성 → onSubscribe로 전달
     }
 }
 
-class PrintSubscriber implements Subscriber<Integer> {
-
+// 가장 단순한 Subscriber: "전부 주세요"라고만 함
+class SimpleSubscriber implements Subscriber<Integer> {
     @Override
-    public void onSubscribe(Subscription subscription) {
-        // 구독권을 받는다. 원하면 subscription.cancel() 로 흐름을 끊을 수 있다.
-        System.out.println("구독 시작");
+    public void onSubscribe(Subscription s) {
+        // request(n) = "n개까지 받을게"라는 빚(demand). Long.MAX_VALUE는 922경(long 최대값) →
+        // 사실상 무제한이라 빚이 마르지 않는다 = "몇 개든 다 밀어줘, 난 안 막아".
+        // request(3)처럼 적으면 3개 받고 멈춘다(백프레셔). 여기선 그 조절을 안 하니 demand 계산도 불필요.
+        s.request(Long.MAX_VALUE); // ★ "다 줘" = backpressure 사실상 끔 (push 주도)
     }
 
     @Override
     public void onNext(Integer item) {
-        System.out.println("받음: " + item);
+        System.out.println("onNext: " + item);
     }
 
     @Override
-    public void onError(Throwable error) {
-        System.out.println("에러: " + error.getMessage());
+    public void onError(Throwable t) {
+        System.out.println("onError: " + t);
     }
 
     @Override
     public void onComplete() {
-        System.out.println("완료!");
+        System.out.println("onComplete!");
     }
 }
 
 public class App {
     public static void main(String[] args) {
-        Publisher<Integer> publisher = new NumberPublisher();
-        publisher.subscribe(new PrintSubscriber());
+        Publisher<Integer> pub = new SimplePublisher();
+        Subscriber<Integer> sub = new SimpleSubscriber();
+        pub.subscribe(sub); // 이 한 줄이 전부. 신호가 알아서 흐른다.
     }
 }
