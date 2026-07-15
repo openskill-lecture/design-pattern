@@ -3,7 +3,7 @@ package ex09.reactor.step2;
 // 완걸형
 // ── 라이브러리 없이 직접 정의한 Reactive Streams 계약 3종 ──
 interface Publisher<T> {
-    void subscribe(Subscriber<? super T> subscriber); // 실제 reactive-streams와 동일: ? super T
+    void subscribe(Subscriber<T> subscriber); // 단순화: 실무 라이브러리는 Subscriber<? super T>(PECS)지만 여기선 Subscriber<T>
 }
 
 interface Subscriber<T> {
@@ -31,18 +31,18 @@ class RangePublisher implements Publisher<Integer> {
     }
 
     @Override
-    public void subscribe(Subscriber<? super Integer> s) {
+    public void subscribe(Subscriber<Integer> s) {
         s.onSubscribe(new RangeSubscription(s, max));
     }
 }
 
 class RangeSubscription implements Subscription {
-    private final Subscriber<? super Integer> sub;
+    private final Subscriber<Integer> sub;
     private final int max;
     private int next = 1;
     private boolean cancelled = false;
 
-    RangeSubscription(Subscriber<? super Integer> sub, int max) {
+    RangeSubscription(Subscriber<Integer> sub, int max) {
         this.sub = sub;
         this.max = max;
     }

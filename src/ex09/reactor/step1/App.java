@@ -1,8 +1,9 @@
 package ex09.reactor.step1;
 
 // ── Reactive Streams 계약 3종 (라이브러리 없이 직접) ──
+// 실무 reactive-streams는 subscribe(Subscriber<? super T>) — 소비자라 ? super(PECS). 여기선 단순화.
 interface Publisher<T> {
-    void subscribe(Subscriber<? super T> s);
+    void subscribe(Subscriber<T> s);
 }
 
 interface Subscriber<T> {
@@ -21,11 +22,12 @@ interface Subscription {
     void cancel(); // 그만 받기
 }
 
+
 // 계약(Subscription)을 클래스로 — Publisher와 Subscriber 사이의 약속을 담는다
 class SimpleSubscription implements Subscription {
-    private final Subscriber<? super Integer> sub; // 누구에게 신호를 보낼 계약인지
+    private final Subscriber<Integer> sub; // 누구에게 신호를 보낼 계약인지
 
-    SimpleSubscription(Subscriber<? super Integer> sub) {
+    SimpleSubscription(Subscriber<Integer> sub) {
         this.sub = sub;
     }
 
@@ -46,7 +48,7 @@ class SimpleSubscription implements Subscription {
 // 가장 단순한 Publisher: 계약을 만들어 소비자에게 건넨다
 class SimplePublisher implements Publisher<Integer> {
     @Override
-    public void subscribe(Subscriber<? super Integer> sub) {
+    public void subscribe(Subscriber<Integer> sub) {
         sub.onSubscribe(new SimpleSubscription(sub)); // 계약 생성 → onSubscribe로 전달
     }
 }

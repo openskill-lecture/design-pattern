@@ -4,7 +4,7 @@ import java.util.*;
 
 // ── 라이브러리 없이 직접 정의한 Reactive Streams 계약 3종 ──
 interface Publisher<T> {
-    void subscribe(Subscriber<? super T> subscriber);
+    void subscribe(Subscriber<T> subscriber);
 }
 
 interface Subscriber<T> {
@@ -27,11 +27,11 @@ interface Subscription {
 class BufferPublisher implements Publisher<Integer> {
     private final Queue<Integer> buffer = new LinkedList<>(); // ① 발행할 원소를 버퍼로 보관
     private long demand = 0; // 남은 빚(outstanding demand)
-    private Subscriber<? super Integer> sub;
+    private Subscriber<Integer> sub;
     private boolean done = false;
 
     @Override
-    public void subscribe(Subscriber<? super Integer> s) {
+    public void subscribe(Subscriber<Integer> s) {
         this.sub = s;
         s.onSubscribe(new Subscription() {
             @Override
