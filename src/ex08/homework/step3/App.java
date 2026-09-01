@@ -1,7 +1,7 @@
-package ex08.homework;
+package ex08.homework.step3;
 
-import ex08.homework.HomeworkDelegator;
-import ex08.homework.HomeworkType;
+import ex08.homework.step3.HomeworkDelegator;
+import ex08.homework.step3.HomeworkType;
 
 /**
  * 델리게이트

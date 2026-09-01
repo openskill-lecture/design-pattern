@@ -1,4 +1,4 @@
-package ex08.homework;
+package ex08.homework.step3;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ex08.homework;
+package ex08.homework.step1;
 
 public class ScienceStudent implements Student{
     @Override

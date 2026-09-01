@@ -1,4 +1,4 @@
-package ex08.team.facade;
+package ex08.facade.step2;
 
 // facade(파사드) : 팀장이 여러 대리(마케팅·개발·디자인)를 대신 조율한다.
 //                 호출자(임원)는 "출시 준비해줘" 한 마디면 끝. 내부 복잡함을 모른다. (편의)
