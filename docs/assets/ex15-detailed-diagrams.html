@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>거래명세서 리팩터링 상세 다이어그램</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #d9d9d9; font-family: "Malgun Gothic", sans-serif; }
+  .diagram { display: block; width: 1200px; height: 675px; margin: 0 0 24px; background: #fff; }
+  text { fill: #111; }
+  .title { font-size: 31px; font-weight: 700; }
+  .subtitle { font-size: 17px; fill: #555; }
+  .box { fill: #fff; stroke: #222; stroke-width: 2; rx: 12; }
+  .soft { fill: #f3f3f3; }
+  .orange { fill: #fff2eb; stroke: #ff6b35; }
+  .blue { fill: #eef4ff; stroke: #1f5ed6; }
+  .mint { fill: #edf8f3; stroke: #319978; }
+  .dark { fill: #17223b; stroke: #17223b; }
+  .label { font-size: 20px; font-weight: 700; }
+  .small { font-size: 16px; fill: #444; }
+  .tiny { font-size: 14px; fill: #555; }
+  .accent { font-size: 14px; fill: #ff6b35; font-weight: 700; }
+  .white { fill: #fff; }
+  .line { stroke: #222; stroke-width: 2.2; fill: none; }
+  .accentLine { stroke: #ff6b35; stroke-width: 3; fill: none; }
+  .dash { stroke: #777; stroke-width: 2; stroke-dasharray: 8 7; fill: none; }
+</style>
+</head>
+<body>
+
+<svg id="ex15-lifecycle" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">거래명세서 한 건이 발송되기까지</text>
+  <text x="60" y="98" class="subtitle">요청 값이 검증, 조회, 생성, 발송, 후속 처리 단계를 차례로 통과합니다</text>
+  <g transform="translate(55 175)"><rect width="160" height="125" class="box orange"/><text x="80" y="42" text-anchor="middle" class="accent">REQUEST</text><text x="80" y="78" text-anchor="middle" class="label">발송 요청</text><text x="80" y="105" text-anchor="middle" class="tiny">계좌 · 기간 · 형식 · 채널</text></g>
+  <path d="M215 238 H260" class="line" marker-end="url(#a1)"/>
+  <g transform="translate(275 175)"><rect width="160" height="125" class="box soft"/><text x="80" y="42" text-anchor="middle" class="accent">VALIDATE</text><text x="80" y="78" text-anchor="middle" class="label">접근 검증</text><text x="80" y="105" text-anchor="middle" class="tiny">로그인 · 권한 · 계좌</text></g>
+  <path d="M435 238 H480" class="line" marker-end="url(#a1)"/>
+  <g transform="translate(495 175)"><rect width="160" height="125" class="box soft"/><text x="80" y="42" text-anchor="middle" class="accent">READ</text><text x="80" y="78" text-anchor="middle" class="label">원장 조회</text><text x="80" y="105" text-anchor="middle" class="tiny">계좌 + 조회 기간</text></g>
+  <path d="M655 238 H700" class="line" marker-end="url(#a1)"/>
+  <g transform="translate(715 175)"><rect width="160" height="125" class="box soft"/><text x="80" y="42" text-anchor="middle" class="accent">GENERATE</text><text x="80" y="78" text-anchor="middle" class="label">문서 생성</text><text x="80" y="105" text-anchor="middle" class="tiny">PDF · CSV · HTML</text></g>
+  <path d="M875 238 H920" class="line" marker-end="url(#a1)"/>
+  <g transform="translate(935 175)"><rect width="210" height="125" class="box soft"/><text x="105" y="42" text-anchor="middle" class="accent">DELIVER</text><text x="105" y="78" text-anchor="middle" class="label">고객에게 발송</text><text x="105" y="105" text-anchor="middle" class="tiny">EMAIL · SMS · FAX · PUSH</text></g>
+  <path d="M1040 300 V365" class="line" marker-end="url(#a1)"/>
+  <rect x="735" y="390" width="410" height="135" class="box blue"/>
+  <text x="940" y="428" text-anchor="middle" class="accent">AFTER DELIVERY</text>
+  <text x="940" y="465" text-anchor="middle" class="label">발송 완료 후속 처리</text>
+  <text x="940" y="497" text-anchor="middle" class="small">감사 기록 · 고객 알림 · 통계 · 보안 관제</text>
+  <rect x="55" y="390" width="600" height="135" rx="14" fill="#f3f3f3" stroke="#ccc"/>
+  <text x="85" y="432" class="label">실습에서 사용할 요청</text>
+  <text x="85" y="468" class="small">직원 staff01 · 계좌 110-123-456789 · 기간 2026-08</text>
+  <text x="85" y="500" class="small">형식 PDF · 채널 EMAIL · 수신자 customer@bank.com</text>
+  <rect x="55" y="575" width="1090" height="46" rx="9" fill="#17223b"/>
+  <text x="600" y="605" text-anchor="middle" class="small white">각 단계의 변경 이유가 다르기 때문에, 하나의 메서드에 모두 넣으면 변경 영향이 넓어집니다</text>
+</svg>
+
+<svg id="ex15-legacy-impact" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6b35"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">레거시 메서드는 모든 변경의 교차점입니다</text>
+  <text x="60" y="98" class="subtitle">HTML 추가와 보안 검증 추가는 다른 요구사항이지만 같은 메서드를 수정합니다</text>
+  <rect x="405" y="210" width="390" height="235" class="box dark"/>
+  <text x="600" y="260" text-anchor="middle" class="small white">LegacyStatementService</text>
+  <text x="600" y="305" text-anchor="middle" class="label white">명세서를발송한다()</text>
+  <line x1="440" y1="330" x2="760" y2="330" stroke="#fff"/>
+  <text x="600" y="365" text-anchor="middle" class="tiny white">검증 · 조회 · 문서 생성 · 발송 · 감사 기록</text>
+  <text x="600" y="395" text-anchor="middle" class="tiny white">구체 객체 생성 · 선택 if 분기 · 외부 API 호출</text>
+  <rect x="55" y="145" width="245" height="105" class="box orange"/><text x="177" y="184" text-anchor="middle" class="label">HTML 추가</text><text x="177" y="217" text-anchor="middle" class="small">문서 형식 변경</text>
+  <path d="M300 200 C350 215 370 250 405 280" class="accentLine" marker-end="url(#a2)"/>
+  <rect x="55" y="430" width="245" height="105" class="box orange"/><text x="177" y="469" text-anchor="middle" class="label">PUSH 추가</text><text x="177" y="502" text-anchor="middle" class="small">발송 채널 변경</text>
+  <path d="M300 480 C350 465 375 420 405 390" class="accentLine" marker-end="url(#a2)"/>
+  <rect x="900" y="145" width="245" height="105" class="box orange"/><text x="1022" y="184" text-anchor="middle" class="label">계좌 검증 추가</text><text x="1022" y="217" text-anchor="middle" class="small">보안 정책 변경</text>
+  <path d="M900 200 C850 215 825 250 795 280" class="accentLine" marker-end="url(#a2)"/>
+  <rect x="900" y="430" width="245" height="105" class="box orange"/><text x="1022" y="469" text-anchor="middle" class="label">통계 집계 추가</text><text x="1022" y="502" text-anchor="middle" class="small">후속 처리 변경</text>
+  <path d="M900 480 C850 465 825 420 795 390" class="accentLine" marker-end="url(#a2)"/>
+  <rect x="250" y="575" width="700" height="48" rx="9" fill="#fff2eb" stroke="#ff6b35"/>
+  <text x="600" y="606" text-anchor="middle" class="small">문제의 핵심: 기능 수가 아니라 서로 다른 변경 이유가 한 클래스에 모여 있습니다</text>
+</svg>
+
+<svg id="ex15-strategy" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">서비스는 구체 클래스 대신 두 가지 행위에 의존합니다</text>
+  <text x="60" y="98" class="subtitle">문서 생성 전략과 발송 전략을 생성자로 주입하면 조합을 실행 시점에 바꿀 수 있습니다</text>
+  <rect x="450" y="225" width="300" height="130" class="box dark"/>
+  <text x="600" y="272" text-anchor="middle" class="label white">StatementService</text>
+  <text x="600" y="310" text-anchor="middle" class="tiny white">생성한다() → 발송한다()</text>
+  <rect x="85" y="155" width="260" height="95" class="box orange"/><text x="215" y="187" text-anchor="middle" class="accent">INTERFACE</text><text x="215" y="220" text-anchor="middle" class="label">StatementGenerator</text>
+  <path d="M450 260 H345" class="line" marker-end="url(#a3)"/>
+  <rect x="55" y="325" width="200" height="82" class="box soft"/><text x="155" y="374" text-anchor="middle" class="label">PDF 생성기</text>
+  <rect x="275" y="325" width="200" height="82" class="box soft"/><text x="375" y="374" text-anchor="middle" class="label">CSV 생성기</text>
+  <path d="M155 325 L195 250" class="dash"/><path d="M375 325 L235 250" class="dash"/>
+  <rect x="855" y="155" width="260" height="95" class="box orange"/><text x="985" y="187" text-anchor="middle" class="accent">INTERFACE</text><text x="985" y="220" text-anchor="middle" class="label">StatementSender</text>
+  <path d="M750 260 H855" class="line" marker-end="url(#a3)"/>
+  <rect x="725" y="325" width="200" height="82" class="box soft"/><text x="825" y="374" text-anchor="middle" class="label">EMAIL 발송기</text>
+  <rect x="945" y="325" width="200" height="82" class="box soft"/><text x="1045" y="374" text-anchor="middle" class="label">SMS 발송기</text>
+  <path d="M825 325 L955 250" class="dash"/><path d="M1045 325 L1005 250" class="dash"/>
+  <rect x="205" y="500" width="790" height="82" class="box blue"/>
+  <text x="600" y="535" text-anchor="middle" class="label">가능한 조합</text>
+  <text x="600" y="566" text-anchor="middle" class="small">PDF + EMAIL · PDF + SMS · CSV + EMAIL · CSV + SMS</text>
+</svg>
+
+<svg id="ex15-template" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">생성 순서는 고정하고 표현만 바꿉니다</text>
+  <text x="60" y="98" class="subtitle">상위 클래스가 전체 순서를 소유하고 하위 클래스는 네 단계의 표현을 구현합니다</text>
+  <g transform="translate(60 180)"><rect width="210" height="100" class="box soft"/><text x="105" y="42" text-anchor="middle" class="accent">STEP 1</text><text x="105" y="74" text-anchor="middle" class="label">준비</text></g>
+  <path d="M270 230 H320" class="line" marker-end="url(#a4)"/>
+  <g transform="translate(330 180)"><rect width="210" height="100" class="box soft"/><text x="105" y="42" text-anchor="middle" class="accent">STEP 2</text><text x="105" y="74" text-anchor="middle" class="label">머리말 작성</text></g>
+  <path d="M540 230 H590" class="line" marker-end="url(#a4)"/>
+  <g transform="translate(600 180)"><rect width="210" height="100" class="box soft"/><text x="105" y="42" text-anchor="middle" class="accent">STEP 3</text><text x="105" y="74" text-anchor="middle" class="label">거래내역 작성</text></g>
+  <path d="M810 230 H860" class="line" marker-end="url(#a4)"/>
+  <g transform="translate(870 180)"><rect width="270" height="100" class="box soft"/><text x="135" y="42" text-anchor="middle" class="accent">STEP 4</text><text x="135" y="74" text-anchor="middle" class="label">꼬리말 · 완성</text></g>
+  <path d="M200 280 V355" class="dash"/>
+  <path d="M470 280 V355" class="dash"/>
+  <path d="M735 280 V355" class="dash"/>
+  <path d="M1005 280 V355" class="dash"/>
+  <rect x="60" y="365" width="510" height="145" class="box orange"/>
+  <text x="315" y="405" text-anchor="middle" class="label">PDF 구현</text>
+  <text x="315" y="442" text-anchor="middle" class="small">은행 로고 · 표 · 안내 문구 · PDF 거래명세서</text>
+  <text x="315" y="477" text-anchor="middle" class="tiny">전체 생성 순서는 바꾸지 않습니다</text>
+  <rect x="630" y="365" width="510" height="145" class="box blue"/>
+  <text x="885" y="405" text-anchor="middle" class="label">CSV 구현</text>
+  <text x="885" y="442" text-anchor="middle" class="small">열 이름 · 행 · 마지막 줄 · CSV 거래명세서</text>
+  <text x="885" y="477" text-anchor="middle" class="tiny">전체 생성 순서는 바꾸지 않습니다</text>
+  <rect x="230" y="565" width="740" height="46" rx="9" fill="#17223b"/>
+  <text x="600" y="595" text-anchor="middle" class="small white">전략은 객체를 교체하고, 템플릿 메서드는 알고리즘의 일부 단계를 교체합니다</text>
+</svg>
+
+<svg id="ex15-factory-adapter" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">팩토리는 선택하고, 어댑터는 규격을 맞춥니다</text>
+  <text x="60" y="98" class="subtitle">둘 다 객체 생성을 다루는 것처럼 보여도 해결하는 문제는 다릅니다</text>
+  <rect x="60" y="165" width="220" height="110" class="box orange"/><text x="170" y="207" text-anchor="middle" class="accent">REQUEST</text><text x="170" y="242" text-anchor="middle" class="label">channel = FAX</text>
+  <path d="M280 220 H350" class="line" marker-end="url(#a5)"/>
+  <rect x="365" y="145" width="250" height="150" class="box blue"/><text x="490" y="190" text-anchor="middle" class="accent">FACTORY</text><text x="490" y="228" text-anchor="middle" class="label">SenderFactory</text><text x="490" y="260" text-anchor="middle" class="small">FAX → Adapter 생성</text>
+  <path d="M615 220 H685" class="line" marker-end="url(#a5)"/>
+  <rect x="700" y="145" width="250" height="150" class="box orange"/><text x="825" y="190" text-anchor="middle" class="accent">ADAPTER</text><text x="825" y="228" text-anchor="middle" class="label">FaxSenderAdapter</text><text x="825" y="260" text-anchor="middle" class="small">발송한다()를 변환</text>
+  <path d="M950 220 H1020" class="line" marker-end="url(#a5)"/>
+  <rect x="1035" y="165" width="115" height="110" class="box soft"/><text x="1092" y="205" text-anchor="middle" class="tiny">LEGACY</text><text x="1092" y="238" text-anchor="middle" class="label">FAX</text><text x="1092" y="263" text-anchor="middle" class="tiny">transmit()</text>
+  <rect x="75" y="385" width="460" height="155" class="box soft"/>
+  <text x="305" y="426" text-anchor="middle" class="label">팩토리의 질문</text>
+  <text x="305" y="465" text-anchor="middle" class="small">요청한 채널에 맞는 발송 객체는 무엇인가?</text>
+  <text x="305" y="503" text-anchor="middle" class="tiny">EMAIL → EmailSender · FAX → FaxAdapter</text>
+  <rect x="665" y="385" width="460" height="155" class="box soft"/>
+  <text x="895" y="426" text-anchor="middle" class="label">어댑터의 질문</text>
+  <text x="895" y="465" text-anchor="middle" class="small">다른 메서드 이름과 인자를 어떻게 번역할 것인가?</text>
+  <text x="895" y="503" text-anchor="middle" class="tiny">발송한다(receiver, document) → transmit(receiver, document)</text>
+</svg>
+
+<svg id="ex15-validation-chain" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">검증은 통과한 요청만 다음 단계로 보냅니다</text>
+  <text x="60" y="98" class="subtitle">어느 검사에서 실패했는지에 따라 뒤의 검사와 원장 조회가 실행되지 않습니다</text>
+  <rect x="55" y="180" width="160" height="105" class="box orange"/><text x="135" y="222" text-anchor="middle" class="label">요청</text><text x="135" y="252" text-anchor="middle" class="tiny">직원 + 계좌</text>
+  <path d="M215 232 H280" class="line" marker-end="url(#a6)"/>
+  <rect x="295" y="165" width="210" height="135" class="box soft"/><text x="400" y="205" text-anchor="middle" class="accent">1</text><text x="400" y="240" text-anchor="middle" class="label">로그인 검사</text><text x="400" y="271" text-anchor="middle" class="tiny">실패하면 즉시 종료</text>
+  <path d="M505 232 H570" class="line" marker-end="url(#a6)"/>
+  <rect x="585" y="165" width="210" height="135" class="box soft"/><text x="690" y="205" text-anchor="middle" class="accent">2</text><text x="690" y="240" text-anchor="middle" class="label">직원 권한 검사</text><text x="690" y="271" text-anchor="middle" class="tiny">실패하면 즉시 종료</text>
+  <path d="M795 232 H860" class="line" marker-end="url(#a6)"/>
+  <rect x="875" y="165" width="270" height="135" class="box soft"/><text x="1010" y="205" text-anchor="middle" class="accent">3</text><text x="1010" y="240" text-anchor="middle" class="label">계좌 접근 검사</text><text x="1010" y="271" text-anchor="middle" class="tiny">통과하면 원장 조회로 이동</text>
+  <path d="M400 300 V390" class="accentLine" marker-end="url(#a6)"/>
+  <path d="M690 300 V390" class="accentLine" marker-end="url(#a6)"/>
+  <path d="M1010 300 V390" class="line" marker-end="url(#a6)"/>
+  <rect x="275" y="410" width="250" height="105" class="box orange"/><text x="400" y="452" text-anchor="middle" class="label">로그인 필요</text><text x="400" y="485" text-anchor="middle" class="small">2, 3번은 실행 안 함</text>
+  <rect x="565" y="410" width="250" height="105" class="box orange"/><text x="690" y="452" text-anchor="middle" class="label">권한 없음</text><text x="690" y="485" text-anchor="middle" class="small">3번은 실행 안 함</text>
+  <rect x="855" y="410" width="290" height="105" class="box blue"/><text x="1000" y="452" text-anchor="middle" class="label">모두 통과</text><text x="1000" y="485" text-anchor="middle" class="small">원장 조회 실행</text>
+  <rect x="160" y="575" width="880" height="46" rx="9" fill="#17223b"/>
+  <text x="600" y="605" text-anchor="middle" class="small white">검사 추가는 새 Validator를 만들고 체인 조립 코드에 연결하는 일입니다</text>
+</svg>
+
+<svg id="ex15-cache" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a7" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6b35"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">같은 계좌와 기간을 다시 조회하면 프록시가 응답합니다</text>
+  <text x="60" y="98" class="subtitle">첫 요청은 실제 원장을 조회하고, 두 번째 요청은 캐시에 저장한 값을 반환합니다</text>
+  <text x="130" y="155" text-anchor="middle" class="label">Service</text><line x1="130" y1="170" x2="130" y2="585" class="dash"/>
+  <text x="520" y="155" text-anchor="middle" class="label">Cache Proxy</text><line x1="520" y1="170" x2="520" y2="585" class="dash"/>
+  <text x="1010" y="155" text-anchor="middle" class="label">Core Banking</text><line x1="1010" y1="170" x2="1010" y2="585" class="dash"/>
+  <path d="M130 220 H520" class="accentLine" marker-end="url(#a7)"/><text x="325" y="210" text-anchor="middle" class="small">조회(계좌, 2026-08)</text>
+  <path d="M520 275 H1010" class="accentLine" marker-end="url(#a7)"/><text x="765" y="265" text-anchor="middle" class="small">MISS → 실제 원장 조회</text>
+  <path d="M1010 325 H520" class="line" marker-end="url(#a7)"/><text x="765" y="315" text-anchor="middle" class="small">거래내역 반환</text>
+  <rect x="410" y="350" width="220" height="55" class="box blue"/><text x="520" y="385" text-anchor="middle" class="small">cache.put(계좌:기간)</text>
+  <path d="M130 455 H520" class="accentLine" marker-end="url(#a7)"/><text x="325" y="445" text-anchor="middle" class="small">같은 조건으로 재조회</text>
+  <path d="M520 510 H130" class="line" marker-end="url(#a7)"/><text x="325" y="500" text-anchor="middle" class="small">HIT → 저장된 값 반환</text>
+  <rect x="720" y="440" width="390" height="100" class="box soft"/><text x="915" y="478" text-anchor="middle" class="label">실제 원장 호출 없음</text><text x="915" y="510" text-anchor="middle" class="small">네트워크 비용과 조회 시간을 줄입니다</text>
+  <rect x="165" y="600" width="870" height="40" rx="8" fill="#fff2eb" stroke="#ff6b35"/>
+  <text x="600" y="626" text-anchor="middle" class="tiny">주의: 캐시 키에는 계좌번호와 기간이 모두 포함되어야 하며, 만료 정책도 별도로 필요합니다</text>
+</svg>
+
+<svg id="ex15-observer" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a8" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">서비스는 발송 완료 사실만 알립니다</text>
+  <text x="60" y="98" class="subtitle">감사 기록과 고객 알림은 이벤트를 구독한 객체가 각자 처리합니다</text>
+  <rect x="60" y="220" width="260" height="130" class="box dark"/>
+  <text x="190" y="268" text-anchor="middle" class="label white">StatementService</text>
+  <text x="190" y="305" text-anchor="middle" class="tiny white">발송 완료 이벤트 생성</text>
+  <path d="M320 285 H430" class="line" marker-end="url(#a8)"/>
+  <rect x="445" y="200" width="280" height="170" class="box orange"/>
+  <text x="585" y="243" text-anchor="middle" class="accent">PUBLISHER</text>
+  <text x="585" y="281" text-anchor="middle" class="label">StatementEventPublisher</text>
+  <text x="585" y="320" text-anchor="middle" class="small">구독자 목록을 순회</text>
+  <path d="M725 240 C790 190 835 165 895 150" class="line" marker-end="url(#a8)"/>
+  <path d="M725 285 H895" class="line" marker-end="url(#a8)"/>
+  <path d="M725 330 C790 380 835 410 895 430" class="line" marker-end="url(#a8)"/>
+  <rect x="910" y="105" width="235" height="100" class="box soft"/><text x="1027" y="145" text-anchor="middle" class="label">감사 로그</text><text x="1027" y="177" text-anchor="middle" class="small">직원 발송 이력 기록</text>
+  <rect x="910" y="235" width="235" height="100" class="box soft"/><text x="1027" y="275" text-anchor="middle" class="label">고객 알림</text><text x="1027" y="307" text-anchor="middle" class="small">완료 메시지 발송</text>
+  <rect x="910" y="365" width="235" height="100" class="box soft"/><text x="1027" y="405" text-anchor="middle" class="label">통계 집계</text><text x="1027" y="437" text-anchor="middle" class="small">발송 건수 증가</text>
+  <rect x="80" y="500" width="1040" height="100" class="box blue"/>
+  <text x="600" y="540" text-anchor="middle" class="label">새 후속 작업을 추가하는 방법</text>
+  <text x="600" y="574" text-anchor="middle" class="small">StatementSentObserver 구현 → 조립 코드에서 구독 등록 → StatementService 수정 없음</text>
+</svg>
+
+<svg id="ex15-command-facade" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a9" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="66" class="title">퍼사드는 사용법을 줄이고, 커맨드는 요청을 저장합니다</text>
+  <text x="60" y="98" class="subtitle">예약 시점에는 실행하지 않고, 큐가 명령을 꺼낼 때 서비스가 호출됩니다</text>
+  <rect x="55" y="175" width="165" height="100" class="box soft"/><text x="137" y="216" text-anchor="middle" class="label">App</text><text x="137" y="247" text-anchor="middle" class="tiny">두 메서드만 호출</text>
+  <path d="M220 225 H285" class="line" marker-end="url(#a9)"/>
+  <rect x="300" y="155" width="220" height="140" class="box orange"/><text x="410" y="196" text-anchor="middle" class="accent">FACADE</text><text x="410" y="232" text-anchor="middle" class="label">StatementFacade</text><text x="410" y="263" text-anchor="middle" class="tiny">명령 생성과 큐 사용 감춤</text>
+  <path d="M520 225 H585" class="line" marker-end="url(#a9)"/>
+  <rect x="600" y="155" width="220" height="140" class="box blue"/><text x="710" y="196" text-anchor="middle" class="accent">QUEUE</text><text x="710" y="232" text-anchor="middle" class="label">CommandQueue</text><text x="710" y="263" text-anchor="middle" class="tiny">요청을 순서대로 보관</text>
+  <path d="M820 225 H885" class="line" marker-end="url(#a9)"/>
+  <rect x="900" y="155" width="245" height="140" class="box soft"/><text x="1022" y="196" text-anchor="middle" class="accent">COMMAND</text><text x="1022" y="232" text-anchor="middle" class="label">SendStatementCommand</text><text x="1022" y="263" text-anchor="middle" class="tiny">사용자 · 요청 · 유스케이스 보관</text>
+  <path d="M1022 295 V390" class="line" marker-end="url(#a9)"/>
+  <rect x="825" y="410" width="320" height="120" class="box dark"/><text x="985" y="454" text-anchor="middle" class="label white">StatementService</text><text x="985" y="490" text-anchor="middle" class="tiny white">execute() 시점에 실제 발송</text>
+  <rect x="55" y="410" width="620" height="120" class="box soft"/>
+  <text x="85" y="450" class="label">시간의 분리</text>
+  <text x="85" y="484" class="small">예약: 발송을예약한다() → Command를 큐에 저장</text>
+  <text x="85" y="514" class="small">실행: 예약된요청을실행한다() → execute() → Service 호출</text>
+  <rect x="145" y="585" width="910" height="42" rx="8" fill="#17223b"/>
+  <text x="600" y="612" text-anchor="middle" class="tiny white">클라이언트는 큐, 팩토리, 프록시, 옵저버를 몰라도 거래명세서를 예약하고 실행할 수 있습니다</text>
+</svg>
+
+</body>
+</html>

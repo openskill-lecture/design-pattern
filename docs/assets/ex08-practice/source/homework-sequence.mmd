@@ -1,0 +1,25 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#F7F9FC","primaryTextColor":"#12213F","primaryBorderColor":"#2F6BFF","lineColor":"#4A5568","fontFamily":"Malgun Gothic"}}}%%
+sequenceDiagram
+autonumber
+actor Client as App
+participant Proxy as LearningServiceProxy
+participant Facade as HomeworkLearningFacade
+participant Guide as StudyGuide
+participant Delegator as HomeworkDelegator
+participant Adapter as EnglishHomeworkAdapter
+participant Legacy as LegacyEnglishHomework
+participant Review as ReviewNote
+
+Client->>Proxy: start("S-100", ENGLISH)
+Proxy->>Proxy: isAllowed("S-100")
+Proxy->>Facade: start("S-100", ENGLISH)
+Facade->>Guide: open(ENGLISH)
+Facade->>Delegator: execute(ENGLISH, "S-100")
+Delegator->>Adapter: supports(ENGLISH)
+Adapter->>Legacy: canHandle("ENG")
+Legacy-->>Adapter: true
+Delegator->>Adapter: execute("S-100")
+Adapter->>Legacy: runAssignment("S-100")
+Facade->>Review: save("S-100", ENGLISH)
+Facade-->>Proxy: complete
+Proxy-->>Client: complete

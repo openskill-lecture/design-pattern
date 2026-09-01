@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>디자인 패턴 강의 다이어그램</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #d9d9d9; font-family: "Malgun Gothic", sans-serif; }
+  .diagram { display: block; width: 1200px; height: 675px; margin: 0 0 24px; background: #fff; }
+  text { fill: #111; }
+  .title { font-size: 30px; font-weight: 700; }
+  .subtitle { font-size: 16px; fill: #555; }
+  .box { fill: #fff; stroke: #222; stroke-width: 2; rx: 12; }
+  .soft { fill: #f3f3f3; }
+  .orange { fill: #fff2eb; stroke: #ff6b35; }
+  .dark { fill: #222; stroke: #222; }
+  .darkText { fill: #fff; font-weight: 700; }
+  .label { font-size: 19px; font-weight: 700; }
+  .small { font-size: 15px; fill: #444; }
+  .tiny { font-size: 13px; fill: #555; }
+  .light { fill: #fff; }
+  .interface { font-size: 14px; fill: #ff6b35; font-weight: 700; }
+  .line { stroke: #222; stroke-width: 2; fill: none; }
+  .dash { stroke: #777; stroke-width: 2; stroke-dasharray: 7 6; fill: none; }
+  .accentLine { stroke: #ff6b35; stroke-width: 3; fill: none; }
+  .lifeline { stroke: #aaa; stroke-width: 2; stroke-dasharray: 5 6; }
+</style>
+</head>
+<body>
+
+<svg id="ex15-roadmap" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arrow1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="65" class="title">한 메서드에서 OCP 구조까지</text>
+  <text x="60" y="94" class="subtitle">문제를 하나씩 분리하며 열 단계로 리팩터링합니다</text>
+
+  <g transform="translate(60 145)">
+    <rect class="box orange" width="190" height="135"/><text x="20" y="36" class="interface">STEP 1</text><text x="20" y="72" class="label">레거시</text><text x="20" y="102" class="small">모든 책임이 한 메서드</text>
+  </g>
+  <path d="M250 212 H280" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(290 145)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 2</text><text x="20" y="72" class="label">SRP</text><text x="20" y="102" class="small">변경 이유를 분리</text>
+  </g>
+  <path d="M480 212 H510" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(520 145)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 3</text><text x="20" y="72" class="label">전략 · DIP</text><text x="20" y="102" class="small">행위를 주입</text>
+  </g>
+  <path d="M710 212 H740" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(750 145)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 4</text><text x="20" y="72" class="label">템플릿 메서드</text><text x="20" y="102" class="small">생성 순서를 고정</text>
+  </g>
+  <path d="M940 212 H970" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(980 145)">
+    <rect class="box soft" width="160" height="135"/><text x="18" y="36" class="interface">STEP 5</text><text x="18" y="72" class="label">팩토리</text><text x="18" y="102" class="small">생성을 등록</text>
+  </g>
+
+  <path d="M1060 280 V330 H140 V360" class="line" marker-end="url(#arrow1)"/>
+
+  <g transform="translate(60 370)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 6</text><text x="20" y="72" class="label">어댑터</text><text x="20" y="102" class="small">기존 팩스 연결</text>
+  </g>
+  <path d="M250 437 H280" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(290 370)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 7</text><text x="20" y="72" class="label">책임 연쇄</text><text x="20" y="102" class="small">검증을 연결</text>
+  </g>
+  <path d="M480 437 H510" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(520 370)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 8</text><text x="20" y="72" class="label">캐시 프록시</text><text x="20" y="102" class="small">반복 조회를 줄임</text>
+  </g>
+  <path d="M710 437 H740" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(750 370)">
+    <rect class="box soft" width="190" height="135"/><text x="20" y="36" class="interface">STEP 9</text><text x="20" y="72" class="label">옵저버</text><text x="20" y="102" class="small">후속 작업을 분리</text>
+  </g>
+  <path d="M940 437 H970" class="line" marker-end="url(#arrow1)"/>
+  <g transform="translate(980 370)">
+    <rect class="box orange" width="160" height="135"/><text x="18" y="36" class="interface">STEP 10</text><text x="18" y="72" class="label">완성</text><text x="18" y="102" class="small">커맨드 · 퍼사드</text>
+  </g>
+  <rect x="60" y="565" width="1080" height="58" rx="12" fill="#222"/>
+  <text x="600" y="602" text-anchor="middle" class="darkText" font-size="20">HTML과 PUSH를 추가해도 StatementService는 수정하지 않습니다</text>
+</svg>
+
+<svg id="ex15-flow" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="60" class="title">최종 실행 흐름</text>
+  <text x="60" y="88" class="subtitle">각 패턴은 서로 다른 변경 이유를 맡습니다</text>
+
+  <rect x="60" y="140" width="165" height="76" class="box orange"/><text x="142" y="174" text-anchor="middle" class="label">Facade</text><text x="142" y="199" text-anchor="middle" class="small">발송 예약</text>
+  <path d="M225 178 H280" class="line" marker-end="url(#arrow2)"/>
+  <rect x="290" y="140" width="165" height="76" class="box"/><text x="372" y="174" text-anchor="middle" class="label">CommandQueue</text><text x="372" y="199" text-anchor="middle" class="small">나중에 실행</text>
+  <path d="M455 178 H510" class="line" marker-end="url(#arrow2)"/>
+  <rect x="520" y="125" width="220" height="106" class="box dark"/><text x="630" y="170" text-anchor="middle" class="darkText" font-size="21">StatementService</text><text x="630" y="198" text-anchor="middle" class="small light">업무 순서만 조정</text>
+
+  <path d="M630 231 V275" class="line" marker-end="url(#arrow2)"/>
+  <rect x="80" y="290" width="230" height="95" class="box soft"/><text x="195" y="325" text-anchor="middle" class="label">책임 연쇄</text><text x="195" y="354" text-anchor="middle" class="small">로그인 → 권한 → 계좌</text>
+  <rect x="350" y="290" width="230" height="95" class="box soft"/><text x="465" y="325" text-anchor="middle" class="label">캐시 프록시</text><text x="465" y="354" text-anchor="middle" class="small">캐시 → 실제 원장</text>
+  <rect x="620" y="290" width="230" height="95" class="box soft"/><text x="735" y="325" text-anchor="middle" class="label">팩토리</text><text x="735" y="354" text-anchor="middle" class="small">생성기 · 발송기 선택</text>
+  <rect x="890" y="290" width="230" height="95" class="box soft"/><text x="1005" y="325" text-anchor="middle" class="label">옵저버</text><text x="1005" y="354" text-anchor="middle" class="small">감사 · 고객 알림</text>
+
+  <path d="M520 185 C420 230 300 245 195 290" class="dash" marker-end="url(#arrow2)"/>
+  <path d="M580 231 C540 250 500 265 465 290" class="dash" marker-end="url(#arrow2)"/>
+  <path d="M680 231 C700 250 720 265 735 290" class="dash" marker-end="url(#arrow2)"/>
+  <path d="M740 185 C850 220 950 245 1005 290" class="dash" marker-end="url(#arrow2)"/>
+
+  <rect x="120" y="465" width="240" height="110" class="box orange"/><text x="240" y="502" text-anchor="middle" class="interface">TEMPLATE METHOD</text><text x="240" y="535" text-anchor="middle" class="label">문서 생성</text><text x="240" y="560" text-anchor="middle" class="small">PDF · CSV · HTML</text>
+  <rect x="480" y="465" width="240" height="110" class="box orange"/><text x="600" y="502" text-anchor="middle" class="interface">STRATEGY</text><text x="600" y="535" text-anchor="middle" class="label">문서 발송</text><text x="600" y="560" text-anchor="middle" class="small">EMAIL · SMS · PUSH</text>
+  <rect x="840" y="465" width="240" height="110" class="box orange"/><text x="960" y="502" text-anchor="middle" class="interface">ADAPTER</text><text x="960" y="535" text-anchor="middle" class="label">기존 팩스</text><text x="960" y="560" text-anchor="middle" class="small">transmit() 연결</text>
+  <path d="M680 385 C590 420 380 430 240 465" class="line" marker-end="url(#arrow2)"/>
+  <path d="M760 385 C730 420 660 435 600 465" class="line" marker-end="url(#arrow2)"/>
+  <path d="M800 385 C850 420 910 435 960 465" class="line" marker-end="url(#arrow2)"/>
+</svg>
+
+<svg id="ex15-uml" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="tri3" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L0,10 L10,5 z" fill="#fff" stroke="#222"/></marker><marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="55" y="55" class="title">최종 구조 UML</text>
+  <text x="55" y="82" class="subtitle">중앙 서비스는 구체 클래스가 아니라 변경 지점의 추상화에 의존합니다</text>
+
+  <rect x="455" y="255" width="290" height="110" class="box dark"/><text x="600" y="300" text-anchor="middle" class="darkText" font-size="21">StatementService</text><line x1="455" y1="320" x2="745" y2="320" stroke="#fff"/><text x="600" y="346" text-anchor="middle" class="tiny light">명세서를발송한다()</text>
+
+  <rect x="40" y="125" width="225" height="90" class="box orange"/><text x="152" y="153" text-anchor="middle" class="interface">ABSTRACT</text><text x="152" y="183" text-anchor="middle" class="label">RequestValidator</text>
+  <rect x="40" y="275" width="225" height="90" class="box orange"/><text x="152" y="303" text-anchor="middle" class="interface">INTERFACE</text><text x="152" y="333" text-anchor="middle" class="label">TransactionSource</text>
+  <rect x="40" y="425" width="225" height="90" class="box soft"/><text x="152" y="457" text-anchor="middle" class="label">CachedSourceProxy</text><text x="152" y="486" text-anchor="middle" class="small">CoreSource를 감쌈</text>
+
+  <rect x="935" y="105" width="225" height="90" class="box orange"/><text x="1047" y="133" text-anchor="middle" class="interface">ABSTRACT</text><text x="1047" y="163" text-anchor="middle" class="label">StatementGenerator</text>
+  <rect x="935" y="235" width="225" height="90" class="box orange"/><text x="1047" y="263" text-anchor="middle" class="interface">INTERFACE</text><text x="1047" y="293" text-anchor="middle" class="label">StatementSender</text>
+  <rect x="935" y="365" width="225" height="90" class="box orange"/><text x="1047" y="393" text-anchor="middle" class="interface">INTERFACE</text><text x="1047" y="423" text-anchor="middle" class="label">SentObserver</text>
+
+  <rect x="420" y="505" width="170" height="80" class="box soft"/><text x="505" y="538" text-anchor="middle" class="label">GeneratorFactory</text><text x="505" y="564" text-anchor="middle" class="small">생성기 등록</text>
+  <rect x="610" y="505" width="170" height="80" class="box soft"/><text x="695" y="538" text-anchor="middle" class="label">SenderFactory</text><text x="695" y="564" text-anchor="middle" class="small">발송기 등록</text>
+  <rect x="440" y="110" width="155" height="75" class="box soft"/><text x="517" y="141" text-anchor="middle" class="label">Facade</text><text x="517" y="165" text-anchor="middle" class="small">단순한 입구</text>
+  <rect x="615" y="110" width="155" height="75" class="box soft"/><text x="692" y="141" text-anchor="middle" class="label">CommandQueue</text><text x="692" y="165" text-anchor="middle" class="small">요청 저장</text>
+
+  <path d="M265 170 C350 180 410 230 455 280" class="line" marker-end="url(#arrow3)"/><path d="M265 320 H455" class="line" marker-end="url(#arrow3)"/><path d="M745 280 C820 230 860 170 935 150" class="line" marker-end="url(#arrow3)"/><path d="M745 310 H935" class="line" marker-end="url(#arrow3)"/><path d="M745 340 C820 370 860 400 935 410" class="line" marker-end="url(#arrow3)"/><path d="M530 365 L505 505" class="line" marker-end="url(#arrow3)"/><path d="M670 365 L695 505" class="line" marker-end="url(#arrow3)"/>
+  <path d="M152 425 V365" class="line" marker-end="url(#tri3)"/><path d="M517 185 C520 215 550 235 570 255" class="line" marker-end="url(#arrow3)"/><path d="M692 185 V255" class="line" marker-end="url(#arrow3)"/>
+  <text x="55" y="625" class="small">구현 예: LoginValidator · PDF/CSV/HTML Generator · EMAIL/SMS/PUSH Sender · FaxAdapter · AuditObserver</text>
+</svg>
+
+<svg id="ex08-roles" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arrow4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="65" class="title">교실의 역할을 객체로 옮기기</text>
+  <text x="60" y="94" class="subtitle">한 번의 영어 학습 요청 안에서 네 가지 구조가 협력합니다</text>
+  <rect x="55" y="170" width="180" height="95" class="box soft"/><text x="145" y="207" text-anchor="middle" class="label">학습 요청자</text><text x="145" y="236" text-anchor="middle" class="small">영어 시작</text>
+  <path d="M235 217 H285" class="line" marker-end="url(#arrow4)"/>
+  <rect x="295" y="155" width="190" height="125" class="box orange"/><text x="390" y="190" text-anchor="middle" class="interface">PROXY</text><text x="390" y="223" text-anchor="middle" class="label">학생증 확인</text><text x="390" y="252" text-anchor="middle" class="small">시작 전에 개입</text>
+  <path d="M485 217 H535" class="line" marker-end="url(#arrow4)"/>
+  <rect x="545" y="155" width="190" height="125" class="box orange"/><text x="640" y="190" text-anchor="middle" class="interface">FACADE</text><text x="640" y="223" text-anchor="middle" class="label">학습 순서</text><text x="640" y="252" text-anchor="middle" class="small">공부 · 숙제 · 복습</text>
+  <path d="M735 217 H785" class="line" marker-end="url(#arrow4)"/>
+  <rect x="795" y="155" width="190" height="125" class="box orange"/><text x="890" y="190" text-anchor="middle" class="interface">DELEGATION</text><text x="890" y="223" text-anchor="middle" class="label">학생 선택</text><text x="890" y="252" text-anchor="middle" class="small">과목에 맞게 위임</text>
+
+  <path d="M890 280 V345" class="line" marker-end="url(#arrow4)"/>
+  <rect x="690" y="365" width="180" height="105" class="box soft"/><text x="780" y="405" text-anchor="middle" class="label">일반 학생</text><text x="780" y="434" text-anchor="middle" class="small">수학 · 과학 · 역사</text>
+  <rect x="920" y="365" width="210" height="105" class="box orange"/><text x="1025" y="400" text-anchor="middle" class="interface">ADAPTER</text><text x="1025" y="432" text-anchor="middle" class="label">영어 학생 연결</text>
+  <path d="M890 345 C850 350 810 355 780 365" class="line" marker-end="url(#arrow4)"/><path d="M890 345 C940 350 985 355 1025 365" class="line" marker-end="url(#arrow4)"/>
+  <path d="M1025 470 V525" class="line" marker-end="url(#arrow4)"/>
+  <rect x="920" y="535" width="210" height="75" class="box soft"/><text x="1025" y="569" text-anchor="middle" class="label">외부 영어 학생</text><text x="1025" y="594" text-anchor="middle" class="small">solve() 사용</text>
+  <rect x="55" y="365" width="520" height="180" rx="14" fill="#f3f3f3" stroke="#ccc"/>
+  <text x="85" y="410" class="label">구분 기준</text><text x="85" y="450" class="small">위임 — 누구에게 일을 맡기는가</text><text x="85" y="482" class="small">어댑터 — 다른 인터페이스를 어떻게 맞추는가</text><text x="85" y="514" class="small">퍼사드 — 복잡한 사용 순서를 어떻게 감추는가</text>
+</svg>
+
+<svg id="ex08-flow" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arrow5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6b35"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="60" y="58" class="title">영어 숙제 요청의 실제 실행 순서</text>
+  <text x="60" y="86" class="subtitle">호출은 왼쪽에서 오른쪽으로 이동하고 실제 작업 뒤에 복습으로 돌아옵니다</text>
+  <g><text x="115" y="140" text-anchor="middle" class="label">App</text><line x1="115" y1="155" x2="115" y2="600" class="lifeline"/></g>
+  <g><text x="320" y="140" text-anchor="middle" class="label">Proxy</text><line x1="320" y1="155" x2="320" y2="600" class="lifeline"/></g>
+  <g><text x="525" y="140" text-anchor="middle" class="label">Service</text><line x1="525" y1="155" x2="525" y2="600" class="lifeline"/></g>
+  <g><text x="730" y="140" text-anchor="middle" class="label">Delegator</text><line x1="730" y1="155" x2="730" y2="600" class="lifeline"/></g>
+  <g><text x="925" y="140" text-anchor="middle" class="label">Adapter</text><line x1="925" y1="155" x2="925" y2="600" class="lifeline"/></g>
+  <g><text x="1090" y="140" text-anchor="middle" class="label">OuterStudent</text><line x1="1090" y1="155" x2="1090" y2="600" class="lifeline"/></g>
+  <path d="M115 190 H320" class="accentLine" marker-end="url(#arrow5)"/><text x="210" y="181" text-anchor="middle" class="small">시작(ENGLISH)</text>
+  <path d="M320 235 H525" class="accentLine" marker-end="url(#arrow5)"/><text x="420" y="226" text-anchor="middle" class="small">학생증 확인 후 시작</text>
+  <path d="M525 280 H730" class="accentLine" marker-end="url(#arrow5)"/><text x="625" y="271" text-anchor="middle" class="small">공부()</text>
+  <path d="M525 335 H730" class="accentLine" marker-end="url(#arrow5)"/><text x="625" y="326" text-anchor="middle" class="small">숙제(ENGLISH)</text>
+  <path d="M730 390 H925" class="accentLine" marker-end="url(#arrow5)"/><text x="825" y="381" text-anchor="middle" class="small">doHomework()</text>
+  <path d="M925 445 H1090" class="accentLine" marker-end="url(#arrow5)"/><text x="1005" y="436" text-anchor="middle" class="small">solve()</text>
+  <path d="M1090 490 H925" class="dash"/><path d="M925 515 H730" class="dash"/><path d="M730 550 H525" class="dash"/><text x="625" y="541" text-anchor="middle" class="small">복습()</text>
+  <rect x="65" y="625" width="1070" height="28" fill="#222" rx="8"/><text x="600" y="645" text-anchor="middle" class="small light">학생증 확인 → 공부 → 영어 숙제 → 복습</text>
+</svg>
+
+<svg id="ex08-uml" class="diagram" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="tri6" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L0,10 L10,5 z" fill="#fff" stroke="#222"/></marker><marker id="arrow6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker></defs>
+  <rect width="1200" height="675" fill="#fff"/>
+  <text x="55" y="55" class="title">숙제 위임 예제 UML</text>
+  <text x="55" y="82" class="subtitle">위임, 어댑터, 퍼사드, 프록시의 경계를 한 그림에서 확인합니다</text>
+  <rect x="65" y="135" width="220" height="90" class="box orange"/><text x="175" y="164" text-anchor="middle" class="interface">INTERFACE</text><text x="175" y="194" text-anchor="middle" class="label">Student</text>
+  <rect x="25" y="310" width="150" height="72" class="box soft"/><text x="100" y="352" text-anchor="middle" class="label">MathStudent</text>
+  <rect x="195" y="310" width="165" height="72" class="box soft"/><text x="277" y="352" text-anchor="middle" class="label">ScienceStudent</text>
+  <rect x="75" y="445" width="250" height="85" class="box orange"/><text x="200" y="476" text-anchor="middle" class="interface">ADAPTER</text><text x="200" y="508" text-anchor="middle" class="label">EnglishStudentAdapter</text>
+  <rect x="75" y="570" width="250" height="65" class="box soft"/><text x="200" y="610" text-anchor="middle" class="label">OuterEnglishStudent</text>
+  <path d="M100 310 L150 225" class="line" marker-end="url(#tri6)"/><path d="M277 310 L205 225" class="line" marker-end="url(#tri6)"/><path d="M200 445 L180 225" class="line" marker-end="url(#tri6)"/><path d="M200 530 V570" class="line" marker-end="url(#arrow6)"/>
+
+  <rect x="455" y="245" width="250" height="110" class="box dark"/><text x="580" y="287" text-anchor="middle" class="darkText" font-size="20">HomeworkDelegator</text><line x1="455" y1="306" x2="705" y2="306" stroke="#fff"/><text x="580" y="334" text-anchor="middle" class="tiny light">List&lt;Student&gt;</text>
+  <path d="M455 280 C390 240 330 200 285 180" class="line" marker-end="url(#arrow6)"/>
+
+  <rect x="840" y="245" width="220" height="100" class="box orange"/><text x="950" y="278" text-anchor="middle" class="interface">FACADE</text><text x="950" y="310" text-anchor="middle" class="label">HomeworkService</text>
+  <path d="M840 295 H705" class="line" marker-end="url(#arrow6)"/>
+  <rect x="840" y="445" width="220" height="90" class="box orange"/><text x="950" y="476" text-anchor="middle" class="interface">PROXY</text><text x="950" y="507" text-anchor="middle" class="label">HomeworkProxy</text>
+  <path d="M950 445 V345" class="line" marker-end="url(#tri6)"/>
+
+  <rect x="430" y="470" width="300" height="120" rx="14" fill="#f3f3f3" stroke="#ccc"/>
+  <text x="455" y="510" class="label">협력 방향</text><text x="455" y="545" class="small">Proxy → Service → Delegator</text><text x="455" y="575" class="small">Delegator → Student → 외부 객체</text>
+</svg>
+
+</body>
+</html>

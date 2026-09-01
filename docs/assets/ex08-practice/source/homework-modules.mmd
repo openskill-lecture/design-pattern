@@ -1,0 +1,51 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#F7F9FC","primaryTextColor":"#12213F","primaryBorderColor":"#2F6BFF","lineColor":"#4A5568","fontFamily":"Malgun Gothic"}}}%%
+classDiagram
+direction TB
+
+class Subject {
+  <<enumeration>>
+  MATH
+  SCIENCE
+  ENGLISH
+}
+
+class HomeworkModule {
+  <<interface>>
+  +supports(subject : Subject) boolean
+  +execute(studentId : String) void
+}
+
+class MathHomeworkModule {
+  +supports(subject : Subject) boolean
+  +execute(studentId : String) void
+}
+
+class ScienceHomeworkModule {
+  +supports(subject : Subject) boolean
+  +execute(studentId : String) void
+}
+
+class EnglishHomeworkAdapter {
+  -legacy : LegacyEnglishHomework
+  +EnglishHomeworkAdapter(legacy : LegacyEnglishHomework)
+  +supports(subject : Subject) boolean
+  +execute(studentId : String) void
+}
+
+class LegacyEnglishHomework {
+  +canHandle(subjectCode : String) boolean
+  +runAssignment(studentId : String) void
+}
+
+class HomeworkDelegator {
+  -modules : List~HomeworkModule~
+  +HomeworkDelegator(modules : List~HomeworkModule~)
+  +execute(subject : Subject, studentId : String) void
+}
+
+HomeworkModule <|.. MathHomeworkModule
+HomeworkModule <|.. ScienceHomeworkModule
+HomeworkModule <|.. EnglishHomeworkAdapter
+EnglishHomeworkAdapter --> LegacyEnglishHomework : adapts
+HomeworkDelegator --> HomeworkModule : selects
+HomeworkModule ..> Subject : checks

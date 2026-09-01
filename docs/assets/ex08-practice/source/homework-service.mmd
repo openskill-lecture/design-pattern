@@ -1,0 +1,47 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#F7F9FC","primaryTextColor":"#12213F","primaryBorderColor":"#2F6BFF","lineColor":"#4A5568","fontFamily":"Malgun Gothic"}}}%%
+classDiagram
+direction TB
+
+class LearningService {
+  <<interface>>
+  +start(studentId : String, subject : Subject) void
+}
+
+class HomeworkLearningFacade {
+  -studyGuide : StudyGuide
+  -delegator : HomeworkDelegator
+  -reviewNote : ReviewNote
+  +HomeworkLearningFacade(studyGuide, delegator, reviewNote)
+  +start(studentId : String, subject : Subject) void
+}
+
+class LearningServiceProxy {
+  -target : LearningService
+  -accessChecker : StudentAccessChecker
+  +LearningServiceProxy(target, accessChecker)
+  +start(studentId : String, subject : Subject) void
+}
+
+class StudyGuide {
+  +open(subject : Subject) void
+}
+
+class HomeworkDelegator {
+  +execute(subject : Subject, studentId : String) void
+}
+
+class ReviewNote {
+  +save(studentId : String, subject : Subject) void
+}
+
+class StudentAccessChecker {
+  +isAllowed(studentId : String) boolean
+}
+
+LearningService <|.. HomeworkLearningFacade
+LearningService <|.. LearningServiceProxy
+LearningServiceProxy --> LearningService : delegates
+LearningServiceProxy --> StudentAccessChecker : checks
+HomeworkLearningFacade --> StudyGuide : opens
+HomeworkLearningFacade --> HomeworkDelegator : delegates
+HomeworkLearningFacade --> ReviewNote : saves

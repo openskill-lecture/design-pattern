@@ -10,7 +10,7 @@ public class EnglishStudentAdapter implements Student{
 
     @Override
     public void doHomework() {
-        student.slove();
+        student.solve();
     }
 
     @Override
